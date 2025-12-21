@@ -2,3 +2,5 @@
 /checkpoints
 /models/xenoglaux_model.ptmodels/*.pt
 checkpoints/*.pt
+models/*.pt
+checkpoints/*.pt
