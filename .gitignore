@@ -1,3 +1,4 @@
 .env
 /checkpoints
-/models/xenoglaux_model.pt
+/models/xenoglaux_model.ptmodels/*.pt
+checkpoints/*.pt
