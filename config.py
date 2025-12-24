@@ -41,7 +41,7 @@ class Config:
     
     # Data loading limits - ENFORCE THESE STRICTLY
     MAX_MONGO_EXAMPLES = 100000
-    MAX_MATHS_EXAMPLES = 30000
+    MAX_MATHS_EXAMPLES = 30
     MAX_LANG_MODEL_LINES = 100000
     
     # Training monitoring

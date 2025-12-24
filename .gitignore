@@ -4,3 +4,4 @@
 checkpoints/*.pt
 models/*.pt
 checkpoints/*.pt
+data_extracter.py
