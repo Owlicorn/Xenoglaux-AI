@@ -13,6 +13,15 @@ from tokenizer import XenoglauxTokenizer
 from model import XenoglauxModel
 import config
 
+# Try to import TPU support
+try:
+    import torch_xla.core.xla_model as xm
+    real_devices = xm.xla_real_devices()
+    TPU_AVAILABLE = any('TPU' in device.upper() for device in real_devices)
+except ImportError:
+    xm = None
+    TPU_AVAILABLE = False
+
 class XenoglauxDataset(Dataset):
     def __init__(self, training_pairs, tokenizer, max_length=512):
         self.pairs = training_pairs
@@ -118,7 +127,18 @@ class StreamingDataset(Iterator):
 class XenoglauxTrainer:
     def __init__(self, persistent_mongo: bool = True, use_streaming: bool = False):
         self.config = config.Config()
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        # Device selection: TPU > GPU > CPU
+        if TPU_AVAILABLE:
+            self.device = xm.xla_device()
+            self.use_tpu = True
+        elif torch.cuda.is_available():
+            self.device = torch.device("cuda")
+            self.use_tpu = False
+        else:
+            self.device = torch.device("cpu")
+            self.use_tpu = False
+            
         self.use_streaming = use_streaming
         print(f"🚀 Using device: {self.device}")
         print(f"📦 Training mode: {'Streaming' if use_streaming else 'Batch'}")
@@ -364,7 +384,10 @@ class XenoglauxTrainer:
             self.optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-            self.optimizer.step()
+            if self.use_tpu:
+                xm.optimizer_step(self.optimizer)
+            else:
+                self.optimizer.step()
             
             total_loss += loss.item()
             self.training_stats['total_batches'] += 1
@@ -404,7 +427,10 @@ class XenoglauxTrainer:
             self.optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-            self.optimizer.step()
+            if self.use_tpu:
+                xm.optimizer_step(self.optimizer)
+            else:
+                self.optimizer.step()
             
             total_loss += loss.item()
             batch_count += 1

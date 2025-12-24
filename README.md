@@ -1,6 +1,4 @@
 # Xenoglaux-AI
-Xenoglaux AI, inspired by the world’s second smallest owl, delivers sharp insight in a tiny package 🦉💡 Fast, lightweight, efficient, watching code silently 🖥️✨ Precision over size, always vigilant 👀 here.
-# Xenoglaux-AI
 
 **Project**: Xenoglaux-AI is a personal research / prototype repository containing scripts and utilities for building, training, and running a small language/math model. The project is under active development.
 
@@ -34,7 +32,13 @@ Xenoglaux AI, inspired by the world’s second smallest owl, delivers sharp insi
 
 **Getting started (developer)**
 
-1. Create and activate a Python virtual environment.
+1. **Easy Setup**: Use the main script which auto-installs dependencies:
+
+```bash
+python main.py train
+```
+
+Or for manual setup, create and activate a Python virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -44,7 +48,35 @@ pip install -r requirements.txt
 
 2. Prepare your dataset. This project assumes you create and manage the training data locally (all data in this repo is authored by the developer).
 
-3. Run training (prototype example — adapt arguments/config as needed):
+3. **Training**: Run training with auto-dependency installation:
+
+```bash
+# Basic training
+python main.py train
+
+# Training with streaming mode for large datasets
+python main.py train --streaming
+
+# Training with custom parameters
+python main.py train --epochs 10 --batch-size 32 --lr 0.001
+```
+
+4. **Inference/Chat**: Run interactive inference:
+
+```bash
+# Interactive chat mode
+python main.py chat
+
+# Inference with custom model/tokenizer paths
+python main.py infer --model models/xenoglaux_model.pt --tokenizer models/tokenizer
+```
+
+**Device Support**: The model automatically detects and uses the best available hardware:
+- **TPU** (Google Colab, Kaggle TPU) - fastest training
+- **GPU** (CUDA) - fast training  
+- **CPU** - fallback for any system
+
+**Manual training** (legacy method):
 
 ```bash
 python trainer.py

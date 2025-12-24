@@ -16,12 +16,27 @@ from tokenizer import XenoglauxTokenizer
 from model import XenoglauxModel
 import config
 
+# Try to import TPU support
+try:
+    import torch_xla.core.xla_model as xm
+    real_devices = xm.xla_real_devices()
+    TPU_AVAILABLE = any('TPU' in device.upper() for device in real_devices)
+except ImportError:
+    xm = None
+    TPU_AVAILABLE = False
+
 class XenoglauxInference:
     def __init__(self, model_path: str = None, tokenizer_path: str = None, 
                  persistent_mongo: bool = True, use_smart_context: bool = True,
                  enable_web_search: bool = True):
         self.config = config.Config
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Device selection: TPU > GPU > CPU
+        if TPU_AVAILABLE:
+            self.device = xm.xla_device()
+        elif torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        else:
+            self.device = torch.device("cpu")
         self.use_smart_context = use_smart_context
         self.enable_web_search = enable_web_search
         
