@@ -104,5 +104,3 @@ Notes: The training and inference scripts are experimental and may require editi
 
 - For questions about the code or data provenance, contact the repository owner (Owlicorn) via the project GitHub.
 
----
-_This README reflects the current state: experimental and under active development._
